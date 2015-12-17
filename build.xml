@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  File:    build.xml
+  Author:  Weldon Whipple <weldon@whipple.org>
+  Desc:    Rudimentary ant build file for file2xliff4j
+  Usage:   ant <target_name>
+
+  Targets: setup    Creates build output directories
+           jar      Creates file2xliff4j.jar (after it runs the
+                    setup and compile targets). (This is the 
+                    default target.)
+           javadoc  Generates JavaDoc documentation
+           compile  Creates class files from Java source
+           clean    Deletes the build directory and all its 
+                    subdirectories
+           release  Generates the file2xliff4j.jar and javadoc
+                    files and places them in a date-stamped
+                    gzipped tar file in the build/release
+                    directory
+-->
+
+<project name="file2xliff4j" default="onejar" basedir=".">
+
+  <property name="build.classes.dir"    location="build/classes"/>
+  <property name="build.doc.dir"        location="build/doc"/>
+  <property name="build.jar.dir"        location="build/jar"/>
+  <property name="build.guijar.dir"     location="build/guijar"/>
+  <property name="build.onejartemp.dir" location="build/onejartemp"/>
+  <property name="build.release.dir"    location="build/release"/>
+  
+  <property name="src.dir"            location="src"/>
+  <property name="test.dir"           location="test"/>
+  <property name="ext.dir"            location="ext"/>
+  <property name="doc.dir"            location="doc"/>
+  <property name="onejar.dir"         location="one-jar-boot"/>
+
+  <path id="project.classpath">
+    <pathelement location="${build.classes.dir}"/>
+    <pathelement location="${ext.dir}"/>
+    <fileset dir="${ext.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="setup">
+    <mkdir dir="${build.classes.dir}"/>
+    <mkdir dir="${build.doc.dir}"/>
+    <mkdir dir="${build.jar.dir}"/>
+    <mkdir dir="${build.guijar.dir}"/>
+    <mkdir dir="${build.release.dir}"/>
+    <mkdir dir="${build.onejartemp.dir}/main"/>
+    <mkdir dir="${build.onejartemp.dir}/lib"/>
+    <tstamp/>
+  </target>    
+
+  <target name="compile" depends="setup">
+    <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
+           executable="/usr/bin/javac">
+      <classpath>
+        <fileset dir="${ext.dir}">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="javadoc" depends="setup">
+    <javadoc destdir="${build.doc.dir}" version="true" author="true"
+        use="true" windowtitle="file2xliff4j"
+        packagenames="file2xliff4j" sourcepath="${src.dir}"
+        sourcefiles="${src.dir}/convert.java">
+      <classpath>
+        <fileset dir="${ext.dir}">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+        
+      <doctitle><![CDATA[<h1>file2xliff4j</h1>]]></doctitle>
+    </javadoc>
+  </target>
+
+  <target name="services" depends="setup">
+    <copy todir="${build.classes.dir}/META-INF/services">
+      <fileset dir="${src.dir}/META-INF/services"
+               includes="java.nio.charset.spi.CharsetProvider"/>
+    </copy>
+  </target>
+
+  <target name="jar" depends="setup, compile, services">
+    <tstamp>
+      <format property="timestamp" pattern="yyyyMMdd"/>
+    </tstamp>
+    <jar destfile="${build.jar.dir}/file2xliff4j-${timestamp}.jar" 
+         basedir="${build.classes.dir}"
+         includes="*.class **/*.class **/java.nio.charset.spi.CharsetProvider">
+      <manifest>
+        <attribute name="Main-Class" value="file2xliff4j.Gui"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="onejar" depends="setup, compile, services, jar">
+    <copy todir="${build.onejartemp.dir}/main">
+      <fileset dir="${build.jar.dir}/"
+               includes="file2xliff4j*.jar"/>
+    </copy>
+    <copy todir="${build.onejartemp.dir}/lib">
+      <fileset dir="${ext.dir}/"
+               includes="**/*.jar"/>
+    </copy>
+    <copy todir="${build.onejartemp.dir}/">
+      <fileset dir="${onejar.dir}/"
+               includes="**/*.*"/>
+    </copy>
+    <tstamp>
+      <format property="timestamp" pattern="yyyyMMdd"/>
+    </tstamp>
+    <jar destfile="${build.guijar.dir}/file2xliff4j-gui-${timestamp}.jar" 
+         basedir="${build.onejartemp.dir}"
+         includes="**/*.*">
+      <manifest>
+        <attribute name="Main-Class"     value="com.simontuffs.onejar.Boot"/>
+        <attribute name="One-Jar-Expand" value="expand,doc"/>
+      </manifest>
+    </jar>
+  </target>
+
+
+  <target name="release" depends="jar, javadoc">
+    <tstamp>
+      <format property="timestamp" pattern="yyyyMMdd"/>
+    </tstamp>
+    <tar destfile="${build.release.dir}/file2xliff4j-${timestamp}.src.tgz"
+         compression="gzip">
+      <tarfileset dir="${src.dir}" prefix="src">
+        <include name="**/*.java"/>
+      </tarfileset>
+      <tarfileset dir="${doc.dir}" prefix="doc">
+        <include name="**/*.html"/>
+      </tarfileset>
+      <tarfileset dir="${build.doc.dir}" prefix="javadoc">
+        <include name="**/*.html"/>
+      </tarfileset>
+      <tarfileset dir="${build.jar.dir}" prefix="">
+        <include name="**/*.jar"/>
+      </tarfileset>
+      <tarfileset dir=".">
+        <include name="Changes"/>
+      </tarfileset>
+      <tarfileset dir=".">
+        <include name="build.xml"/>
+      </tarfileset>
+      <tarfileset dir=".">
+        <include name="Changes"/>
+      </tarfileset>
+      <tarfileset dir=".">
+        <include name="README"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <target name="clean">
+    <delete dir="build"/>
+  </target>
+</project>

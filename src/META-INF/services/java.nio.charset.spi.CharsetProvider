@@ -1,0 +1,5 @@
+# Class that implements the non-Asian
+# Maker Interchange Format character
+# encoding used by FrameMaker.
+file2xliff4j.MifCharsetProvider
+

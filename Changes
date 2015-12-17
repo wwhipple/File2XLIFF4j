@@ -1,0 +1,666 @@
+Revision history for file2xliff4j.
+
+2007/07/11
+    ConverterFactory.java: Add support for the WinRcExporter.
+
+    HtmlSkeletonMerger.java: Fix bug that occurs when the HTML file
+        begins with a tag that has attributes with translatable text
+        as their values. (The HTML file that broke the Merger in this
+        case began with an anchor tag and had a title attribute.)
+        Fixed a related bug that occurs when such a tag has two or
+        more attributes with translatable text [e.g. alt and title].)
+
+    PoExporter.java: Fix cut-and-paster errors (where comments and a
+        few values in the code refer to XUL DTD's ...)
+
+    TuPreener.java: Fix two typos in comments.
+
+    WinRcImporter.java: Add support for STRINGTABLEs and for Unicode
+        (Long) string literals in RC files. (Still doesn't support
+        language and encoding information from the VERSIONINFO's
+        VarFileInfo BLOCK or from the code_page pragma ...)
+
+    WinRcExporter.java: New exporter to convert XLIFF back to
+        a Windows RC file.
+
+    Gui.java: Add support for Windows RC files.
+
+2007/06/28
+    PoImporter.java, PoExporter.java: New converters for GNU Portable
+        Objects (.po) and Templates (.pot).
+
+    ConverterFactory.java, FileType.java, Gui.java: Modifications for
+        PO and bug fixes.
+
+2007/06/22
+    MifImporter.java: Added methods from MifTuPreener (changing them
+        to non-static methods, creating Matchers one time on object
+        instantiation and resetting them in the methods). Fix tabs, so
+        that they are preserved in the XLIFF (and in exported
+        documents). 
+
+    MifExporter.java: Handle tabs properly. Eliminate spurious String
+        tag that appears immediately following some Para tags. Fix
+        argument to recursive resolveFormatCodes call.
+
+    MifTuPreener.java: Class deleted (methods subsumed by
+        MifImporter.java so that Matchers don't have to be re-created
+        with each static method call).
+
+    TuPreener.java: Optimize the ridM Matcher.
+
+2007/06/15 
+    ConverterFactory.java, FileType.java, JavaPropertiesExporter.java, 
+        JavaPropertiesImporter.java: Add support for Java Property 
+        Resource Bundles
+
+    XulDtdExporter.java, XulDtdImporter.java: Additional support for
+        DTDs containing ENTITY declarations (as used by Firefox and
+        Thunderbird in their XUL).
+
+2007/06/11 
+    ExcelExporter.java, ExcelImporter.java, Gui.java,
+        PdfExporterToHtml.java, PdfExporterToOOoText.java,
+        PdfExporterToPlaintext.java, PdfExporterToWord.java,
+        PPTExporter.java, PPTImporter.java, RTFExporter.java,
+        RTFImporter.java, WordExporter.java, WordImporter.java:
+        Remove dependencies on JOOConverter; add dependency in
+        JODConverter 2.2.0.
+
+    MifExporter.java, MifFrameRomanCharset.java, MifParser.java,
+        MifSkeletonMerger.java, MifTuPreener.java: Fixes to handle
+        imbedded graphics in MIF files.
+
+    TuPreener.java: Add missing "u" in Unicode literal.
+
+2007/06/04
+    ConverterFactory.java: Make most methods have package-level
+        security, rather than public. Add createConverter method that
+        accommodates export to a different type than the original
+        source.
+
+    Converter.java, ExcelExporter.java, ExcelImporter.java,
+        HtmlExporter.java, HtmlImporter.java, MifExporter.java,
+        MifImporter.java, OOoTextExporter.java, OOoTextImporter.java,
+        PlaintextExporter.java, PlaintextImporter.java,
+        PPTExporter.java, PPTImporter.java, RTFExporter.java,
+        RTFImporter.java, WordExporter.java, WordImporter.java,
+        XliffImporter.java, XMLExporter.java, XMLImporter.java: Add
+        getConversionProperty method.
+
+    PdfImporter.java, PdfHandler.java, PdfPasswordException.java,
+        PdfExporterToWord.java, PdfExporterToPlaintext.java,
+        PdfExporterToOOoText.java, PdfExporterToHtml.java: New
+        rudimentary (pre-alpha) support for PDF.
+
+    TuPreener.java: Have getCoreText method remove soft hyphens.
+
+2007/05/23
+    ConverterFactory.java, Converter.java, all importers and
+        exporters: Add setConversionProperty and getFileType
+        methods.
+
+    OdfExporter.java, XMLExporter.java, HtmlExporter.java:
+        Eliminate numerous String allocations in expandTus
+        method, writing instead directly to a BufferedWriter.
+        (Export now runs more than an order of magnitude
+        faster and uses considerably less memory.)
+
+    XMLImporter.java, XMLCandidateTuXPathGenerator.java:
+        Handle XML files with CDATA sections.
+
+    Other files: Change StringBuffer to StringBuilder and
+        reduce number of String allocations.
+
+2007/05/04
+    Format.java, XMLExporter.java, XMLImporter.java, 
+        XMLSkeletonMerger.java: Make XML converters handle 
+        CDATA sections.
+
+    HtmlExporter.java: Fix bug that might occur if a format
+        code can't be retrieved.
+
+    HtmlHandler.java: Loosen code that collapses nested
+        bx/ex tags to allow for spaces between the nested
+        tags.
+
+    HtmlSkeletonMerger.java: Slight modification to allow
+        the HTML converters to handle php web pages.
+
+    OdfHandler.java: Remove reference in a comment to the
+        use of the HotSAX parser (!!)
+
+    TuPreener.java: Optimize the regular expressions a bit.
+
+    TuStrings.java: Tweak the handling of entities, newlines,
+        etc.
+
+2007/04/13
+    HtmlExporter.java: Fix bug in what is reported to the
+        generatedFileName string buffer (passed as argument
+        to convert method).
+
+    HtmlImporter.java, HtmlHandler: Fix auto-closing of
+        table tags to avoid generation of bogus skeleton
+        in certain cases. Merge nested (bx/bx/ex/ex) tags
+        to become bx/ex (or even x, if there is no enclosed
+        text).
+
+    HtmlSkeletonMerger.java: Optimize the handling of end br
+        tags (reported by Neko but not often actually
+        occurring in HTML files).
+
+    MifExporter.java, OdfExporter.java, PlaintextExporter.java,
+        TuStrings.java, XMLExporter: Add argument to storeTarget
+        Method to indicate whether to convert characters requiring
+        conversion to entities when including original source segment
+        in not-yet-translated message that appears in exported
+        documents.
+
+    MifFrameRomanCharset.java, PlaintextImporter.java,
+        XliffImporter.java, XMLIMporter.java: Fix comments.
+
+    OdfHandler.java: If XLIFF contains a bx-bx-ex-ex element
+        sequence, replace it with a single x element.
+
+2007/04/06
+    convert.java, Gui.java: Add graphical user interface to 
+        file2xliff4j.
+
+    HtmlHandler.java: Make sentence segmentation the default.
+
+    PlaintextImporter.java: Use double backslashes in front of
+        unicode literals that will appear in regex character
+        classes.
+
+    HtmlSkeletonMerger.java: Handle attribute values that aren't
+        within quotation marks.
+
+2007/04/04
+    convert.java: Add support for ODS, ODP, XML and PLAINTEXT file
+        types.
+
+    ConverterFactory.java: Fix bug in RTF file type recognition.
+
+    HtmlExporter.java: Fix handling of apos entity for Internet
+        Explorer.
+
+    HtmlImporter.java: Support label tag
+
+    OdfExporter.java: Fix xid matching bug.
+
+    HtmlSkeletonMerger.java: Fix numerous bugs: Allow closing
+        p tag without opening p tag. Allow open and close tag
+        pair to be of different case. Other miscellandous bugs.
+
+    PlaintextImporter.java: Cosmetic changes to some final
+        variables.
+
+    TuPreener.java: If tu has unbalanced bx/ex tags, strip the
+        bx/ex tags, but leave x tags.
+
+    TuStrings.java: Check for null pointer before dereferencing
+        me variable; unescape test of original source when it
+        appears in a "not yet translated" message.
+
+2007/03/09
+    HtmlExporter.java: When exporting HTML, change &apos; entity
+        to &#x27; so that it will display correctly in Internet
+        Explorer
+
+    HtmlHandler.java: Support table tag's summary attribute, and fix
+        link tag's title attribute and input tag's alt attribute.
+        Properly handle file names that contain ampersands when
+        specifying the value of the XLIFF file element's original
+        attribute. Don't lose spaces that separate two words, each
+        separately formatted.
+
+    HtmlImporter.java: Add support for the HTML caption tag.
+
+    HtmlSkeletonMerger.java: Numerous fixes and modifications to
+        accommodate poorly formed HTML that still displays in a
+        browser, as well as to handle uncommon legal HTML cases.
+
+    MifExporter.java, OdfExporter.java: Comment out getNativeFileName
+        method--not called by any other method.
+
+    MifImporter.java, PlaintextImporter, XliffImporter.java,
+        XMLImporter.java: Properly handle file names that contain
+        ampersands when specifying the value of the XLIFF file
+        element's original attribute.
+
+    OdfHandler.java: Properly handle file names that contain
+        ampersands when specifying the value of the XLIFF file
+        element's original attribute. Don't lose spaces that separate
+        two words, each separately formatted.
+
+    TuPreener.java: Enhance validateAndRepairTu method to strip
+        ex and bx tags that lack id attributes.
+
+    XMLImporter.java: Don't lose spaces that separate two words, each
+        separately formatted.
+
+2007/03/02
+    ConverterFactory.java, FileType.java: Add initial support for 
+        Plaintext converters.
+
+    OdfExporter.java: Add more error checking
+
+    TuStrings.java: Fix bug where old TuPreener.CORE_START_TAG was
+        still being used (instead of TuPreener.CORE_START_MRK).
+
+    TuPreener.java: Add start and end mrk tags as legal tags within
+        source and target elements.
+
+    OdfSkeletonMerger.java, OdfImporter.java: Discontinue use of 
+        Java's File.createTempFile method.
+
+    OdfHandler.java: Add collapseNestedBxEx method.
+
+2007/02/23
+    HtmlHandler.java, SkeletonMerger.java and all classes that
+        implement the SkeletonMerger interface (HtmlSkeletonMerger,
+        MifSkeletonMerger, OdfSkeletonMerger, XliffSkeletonMerger,
+        XMLSkeletonMerger). Fix problems in the HTML skeleton that
+        occur when the HTML file is seriously malformed (e.g., with
+        paragraphs that end in </p> but are missing the beginning
+        <p> tag). (This required a new SkeletonMerger method,
+        which rippled to all classes that implement the SkeletonMerger
+        interface.)
+        
+    MifImporter, OdfHandler, XMLImporter.java, HtmlImporter.java:
+        Make sentence segmentation the default. Add paragraph ID
+        to each trans-unit.
+
+2007/02/15
+
+    ExcelExporter.java ExcelImporter.java PPTExporter.java
+        PPTImporter.java RTFExporter.java RTFImporter.java
+        WordExporter.java WordImporter.java: Fix renaming
+        bug that occurs if the JOOConvert call fails.
+
+    OdfHandler.java: Fix bug that stored resolved entity values in the
+        format file, resulting in invalid content.xml/styles.xml at
+        export time.
+
+2007/02/07
+    OdfExporter.java, HtmlHandler.java, MifTuPreener.java,
+        TuPreener.java, HtmlExporter.java, OdfHandler.java,
+        XMLExporter.java: Remove foreign namespace elements from
+        source and target elements (per the XLIFF spec). Instead use
+        the XLIFF mrk element (with mtype='x-coretext') to delimit the
+        the core text of the source and targets.
+
+2007/01/31
+    ExcelExporter.java: Handle case where the .xls extension
+        is in mixed or uppercase.
+
+    HtmlHandler.java: Include indication in a sentence segment's
+        trans-unit tag of whether it is followed by another sentence
+        in the same paragraph.
+
+    HtmlImporter.java: Default to sentence segment boundaries rather
+        than paragraph boundaries.
+
+    MifImporter.java: Include indication in a sentence segment's
+        trans-unit tag of whether it is followed by another sentence
+        in the same paragraph. Default to sentence segment boundaries
+        rather than paragraph boundaries.
+
+    OdfExporter.java: During export, remove all XLIFF mrk tags
+        from exported segments.
+
+    OdfHandler.java: Convert Wingdings characters (present in ODF that
+        was generated by OOo from RTF documents) to unicode. Compress
+        text:tab elements that are surrounded by text:span open and
+        close tags to a single XLIFF x tag. Default to sentence
+        segmentation.
+
+    OdfImporter.java: Handle nested text:p elements in styles.xml
+        (in the same way as in content.xml).
+
+    OOoTextExporter.java: Handle original file extensions that are in
+        mixed or all uppercase.
+
+    PPTExporter.java: Handle .ppt extension in mixed or all uppercase.
+
+    RTFExporter.java: Handle .rtf extension in mixed or all uppercase.
+
+    TuPreener.java: Handle XLIFF mrk elements of
+        mtype='x-mergeboundary'
+
+    TuStrings.java: Make "Not yet translated" message (in exported
+        documents) more helpful. Fix unnecessary (and bug-infested)
+        conversions between String and UUID.
+
+    WordExporter: Handle .doc extension in mixed or all uppercase.
+
+    XMLExporter: Make sentence the default segment boundary. Fix a few
+        XLIFF generation bugs.
+
+2007/01/09
+
+    Converter.java: Add support for styles.xml skeleton (if
+        applicable); increase BLKSIZE to 8192. Added skipList
+        parameter to the convert method (a list of potential
+        structures to omit)--used (for now) in the generic XML
+        converters. 
+
+    OdfStateObject.java: New class to maintain states between
+        conversion/import of content.xml and styles.xml files in OOo
+        ODF documents.
+    
+    XMLImporter.java, XMLExporter.java, XMLSkeletonMerger.java: Three
+        classes for the import/export of generic XML to/from XLIFF.
+
+    ConverterFactory.java: Add support for generic XML
+        conversions. Add getDataTypeFromXliff() method.
+
+    OdfExporter.java, OdfImporter.java, OdfSkeletonMerger.java,
+        OdfHandler.java: Add support for styles.xml file (in addition
+        to content.xml), which frequently has translatable text for
+        headers and footers (etc.)
+
+    HtmlHandler.java: No longer preserve newlines in translation
+        units--unless within a <pre> tag. Fix inconsistencies in the
+        handling of the <br> tag. Fix bug (introduced when sentence
+        segmentation was added) in the writing of attribute values to
+        the temporary skeleton file.
+
+    MifImporter.java, MifExporter.java, MifSkeletonMerger.java,
+        MifTuPreener.java: Add support for sentence
+        segmentation. Otimized regex Matchers.
+
+    WordImporter.java, WordExporter.java, RTFImporter.java,
+        RTFExporter.java, PPTImporter.java, PPTExporter.java,
+        ExcelImporter.java, ExcelExporter.java: Added workaround to
+        latest JOOConverter's inability to convert files with names
+        containing non-ASCII characters.
+
+    TuPreener.java: Modifications to support the generic XML
+        converters.
+
+    ConversionStatus.java: Added WARNING_INVALID_XML_EXPORTED status.
+
+    OOoTextExporter.java: Optimize reading of input streams. Support
+        styles.xml.
+
+    HtmlSkeletonMerger.java: Increased BLKSIZE to 8192 (for reading
+        streams); optimized regex Matchers.
+
+    FileType.java: Added XML file type.
+
+    HtmlImporter.java: Added form, option and input tags to the list
+        of tags that can break translation units.
+
+    Format.java: Read the format file a block at a time rather than a
+        character at a time.
+
+    XliffImporter.java: Upgraded convert signature to include skipList
+        parameter. (This importer still isn't fully supported ... and
+        may never be.)
+
+    Added new fx2utils package to be used by the generic XML importer.
+
+2006/12/07
+    Converter.java, ExcelExporter.java, ExcelImporter.java,
+        HtmlExporter.java, HtmlImporter.java, HtmlHandler.java,
+        OdfExporter.java, OdfImporter.java, OdfHandler.java,
+        OOoTextExporter.java, OOoTextImporter.java, PPTExporter.java,
+        PPTImporter.java, RTFExporter.java, RTFImporter.java,
+        WordExporter.java, WordImporter.java: Added boundary and
+        generatedFileName parameters to the convert method. The
+        boundary is an indication of where segmentation is to occur on
+        import (i.e., at the sentence or paragraph level). The
+        StringWriter generatedFileName is where converters can return
+        the actual generated filename (if generatedFileName is
+        non-null). Removed the oldest deprecated convert() method
+        variant.
+
+    MifExporter.java, MifImporter.java: Sentence segmentation not yet
+        implemented. However, fixed a bug that prevented MIF
+        conversion on Tomcat (viz., Tomcat's non-support of the
+        Charset Service Provider Interface.)
+
+    OdfSkeletonMerger.java: Support sentence segmentation; fix a bug
+        or two in existing skeleton generation.
+
+    SegmentBoundary.java: New enum for paragraph and sentence
+        segmentation boundaries.
+
+    TuPreener.java, TuStrings.java, HtmlSkeletonMerger: Modifications
+        to support sentence segmentation.
+
+    XliffImporter.java: Changed method signatures to match the
+        Converter interface. (No other changes implemented.)
+
+2006/11/20
+    OOoTextImporter.java: Before attempting to extract content.xml from
+        an odt file with a Japanese characters in the file name, rename
+        (temporarily) the file to a straight ASCII name. Then extract
+        content.xml. Restore the file name afterward. (This is a workaround
+        for a bug that occurs in the Windows JDK's ZipFile class.)
+
+2006/11/01
+    TuPreener.java, TuStrings.java, HtmlExporter.java: Implement
+        TuPreener.checkAndRepairTuTags method, a "relaxed" version of
+        the TuPreener.validateAndRepairTu method. The new method doesn't
+        require that all bx tags be matched by an ex tag. (This is
+        consistent with the way many HTML pages are constructed.)
+
+2006/10/30
+    HtmlHandler.java: Treat the text of buttons (etc.) as translatable
+        text.
+
+2006/10/24
+    OdfHandler.java: Add collapseAnnotations and collapseFootnotes
+        method to collapse the sequences of bx/ex/x tags required
+        to define an office:annotation or text:note sequences into
+        a single x element. This will make XLIFF editors less
+        susceptible to unbalanced XLIFF tag errors.
+    OdfExporter.java: Make changes to recursively expand the bx/ex/x
+        tags (in particular, expand the single x tag above into
+        a sequence of bx/ex/x tags, then to expand the x tag in the
+        tag sequence by substituting the trans-unit of the note or
+        annotation for the x tag.
+
+2006/10/20
+    TuPreener.java: Add the Unicode byte-order mark (U+FEFF) to the
+        character class of whitespace characters.
+
+2006/10/17
+    HtmlImporter.java: Make the quotation marks around Content-Type
+        optional in the guessEncoding method.
+
+2006/10/12
+    OdfExporter.java: Use String's replace method instead of
+        replaceFirst when expanding XLIFF tags to the text from the
+        format file (in case the original text includes the
+        literal string "$0", which will cause an infinite loop).
+
+    HtmlExporter.java: Use String's replace method instead of
+        replaceFirst when expanding XLIFF tags to the text from the
+        format file. (See OdfExporter above. Bug never encountered in
+        HTML, but could conceivably occur.)
+
+
+2006/10/10
+    HtmlHandler.java: Fix the regular expression that moves empty
+        bookmarks outside the core of the translation unit. (Fixes a
+        bug that produced invalid XML.)
+
+    HtmlImporter.java: Have the guessEncoding method read the first
+        1024 lines, rather than the first 25 lines of the HTML
+        file. Make the guessEncoding method public and static.
+
+    MifParser.java: Comment out import of
+        com.thoughtworks.xstream.converters.collections.CharArrayConverter
+        (not used).
+
+    OOoTextExporter.java: Modifications to handle RTF, ODT, ODS, ODP
+        and Word files correctly, especially when the files were
+        originally imported without filename extensions.
+
+2006/10/07
+    OdfHandler.java: Set hasTranslatableText later in the code--after
+        closing ex tag has been appended.
+
+    OdfSkeletonMerger.java: Fix initial passes through the original
+        ODF file (during conversion to a skeleton file), so that it
+        will work properly for text:p tags with nesting level greater
+        than 2.
+
+2006/10/05
+
+    HtmlImporter.java: Use the detected encoding when calling the
+        skeleton merger method (the same as when we parsed the
+        input file.)
+
+    OdfExporter.java: Fix signature (almost) in exported ODT,
+        ODS and ODP files. (Byte at offset 4--counting from
+        zero--should be 0x14. Maybe later ...)
+
+    OdfHandler.java, Format.java, OdfExporter, OdfSkeletonMerger: 
+        Rewritten to handle text:p elements at any
+        depth (e.g., within tables, draw:* elements, etc.)
+
+    ExcelExporter.java, OOoTextExporter, PPTExporter. Fix bugs
+        that prevent export from happening.
+
+    OOoTextImporter.java, OOoTextExporter.java, FileType.java,
+        ConverterFactory: Officially support ODS and ODP
+        documents.
+
+    ConverterFactory.java: Implemented format detection (based on
+        magic file signatures).
+
+    All java files: Replaced GPL statement in prolog with LGPL
+        statement.
+
+    Notifier.java: New interface that lets converters send/
+        make notifications in case of error.
+
+    Converter.java, ExcelExporter.java, ExcelImporter.java,
+        HtmlExporter.java, HtmlImporter.java, MifExporter.java,
+        MifImporter.java, OOoTextExporter.java, OOoTextImporter.java,
+        OdfExporter.java, OdfHandler.java, OdfImporter.java, 
+        PPTExporter.java, PPTImporter.java, RTFExporter.java,
+        RTFImporter.java, WordExporter.java, WordImporter.java,
+        XliffImporter.java: Modifications to implement the
+        Notifier interface,
+
+
+2006/09/01
+
+    MifImporter.java, MifExporter.java, MifParser.java,
+    MifTuPreener.java, MifFrameRomanCharset.java,
+    MifCharsetProvider.java, MifSkeletonMerger.java,
+    META-INF/services/java.nio.charset.spi.CharsetProvider: New files
+        to support FrameMaker's Maker Interchange Format (MIF).
+
+    PPTImporter.java, PPTImporter.java: New files to support
+        PowerPoint format files. 
+    
+    Converter.java and its implementers (Importers and Exporters):
+        Added phase-name support; deprecated methods that were
+        replaced.
+
+    Most other files were changed to reflect MIF support, to add
+        full name and e-mail address in @author JavaDoc tags, and
+        to fix numerous bugs.
+
+2006/06/05
+    ExcelExporter.java, ExcelImporter.java: New converters to convert
+        Excel spreadsheets to and from XLIFF, using OpenOffice.org.
+
+    RTFExporter.java, RTFImporter.java: New converters to convert Rich
+        Text Format (RTF) documents to and from XLIFF, using
+        OpenOffice.org.
+
+    FileType.java, ConverterFactory.java: Modified to handle Excel and
+        RTF.
+
+    OdfHandler.java: Create separate ctypes for text:s and text:tab
+        tags (of OpenDocument format).
+
+    XliffImporter.java: New importer for generic XLIFF to an XLIFF
+        subset. (All format tags map to bx, ex and x; sub tags map
+        recursively to new trans-units; multiple file elements in
+        input XLIFF become a single file element; non-text elements
+        are omitted.
+
+    XliffSkeletonMerger.java: New partial implementation of a merger
+        of the tskeleton into a final skeleton. (To do: account for
+        CTYPE and comment areas in the original document; implement
+        Xliff Exporter.)
+
+
+2006/06/05
+    WordImporter.java: Close the OpenOffice socket connection only if
+        it isn't null ... and remove it from the finally statement,
+        since that *always* results in a null pointer exception.
+
+    WordExporter.java: See WordImporter.java (above)
+
+    TuPreener.java: Recognize more kinds of bullets.
+
+    OpenOfficeConnectException.java: New subclass of
+        ConversionException, thrown by WordImporter.java and
+        WordExporter.java if unable to connect to a listening
+        OpenOffice.org (soffice) process.
+
+    HtmlSkeletonMerger.java: Fixed bug in locating trans-units within
+        attribute values. Also fixed bug in stack of pointers to
+        locations within the skeleton buffer. (The stack cries for a
+        new implementation.)
+
+2006/05/31:
+    OdfImporter.java: Really ignore the native encoding specified as a
+        parameter to the convert method (as the JavaDoc claimes that
+        OdfImporter does). This ensures that XLIFF ends up encoded in
+        UTF-8 (which is nice for things like Arabic documents).
+
+    build.xml: Added rudimentary ant build file.
+
+    file2xliff4j_intro.html: An overview of how to use file2xliff4j.
+
+2006/05/30:
+    HtmlExporter.java: Handle trans-units that appear within title
+        and alt attributes of img and a (anchor) tags. (Those tags
+        appear in the format file.)
+
+    HtmlHandler.java: Move "empty" bookmarks (i.e., anchor tags with
+        name attribute but no href attribute, and no characters
+        between the beginning and end "a" tags) "outside" the
+        trans-unit--i.e., to the "left" of the beginning <lt:core> tag
+        that introduces the "core" area of the trans-unit.
+
+        Recognize img, br, param, applet, embed and object tags. (The
+        br tag now maps to an <x ctype='lb' ... /> XLIFF tag.)
+
+        Expand ctype attributes in bx and x tags. (This release
+        introduces x tags in HTML.) Now all bx and x tags have a ctype
+        attribute. If no "standard" ctype value maps to an HTML tag,
+        use a ctype value of "x-html-<tag_name>" (where <tag-name> is
+        a lower-case HTML tag). Examples: x-html-big, x-html-cite.
+
+        Replace the non-compliant superscript and subscript ctype
+        values (values of the ctype attribute of x and bx tags) with
+        compliant x-html-sup and x-html-sub.
+
+    HtmlSkeletonMerger.java: Handle applet, br, embed, img, object and
+        param HTML tags in the creation of the skeleton file. In the
+        process, fix a bug in text of the alt attribute of img tags
+        (which were previously skipped under certain conditions).
+
+    OdfHandler.java: Expand the ctype attributes of bx and x tags to
+        match the expansion done in HtmlHandler.java. (Also replace
+        superscript and subscript with x-odf-superscript and
+        x-odf-subscript.)
+
+        Fix bug in Word Documents that include annotations (which
+        become office:annotation tags in the ODF XML generated by
+        OpenOffice.org).
+
+    OcfSkeletonMerger.java: Fix for the office:annotation bug
+        mentioned above.

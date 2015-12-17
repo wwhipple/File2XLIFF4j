@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Language" content="en-us" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<title>file2xliff4j: An Overview</title>
+</head>
+<body>
+<h1>file2xliff4j: An Overview</h1>
+<p>Weldon Whipple &lt;<a href="mailto:weldon@lingotek.com">weldon@lingotek.com</a>&gt;<br />
+Revised 11 June 2007</p>
+<hr />
+
+<h2>Contents</h2>
+ <ul>
+  <li><a href="#Introduction">1. Introduction</a></li>
+  <li><a href="#Setup">2. Setup and Configuration</a></li>
+  <ul>
+    <li><a href="#Building">2.1. Build file2xliff4j.jar</a></li>
+    <li><a href="#OpenOffice.org">2.2. Start OpenOffice.org in the Background</a></li>
+    <li><a href="#Callconvert">2.3. Try calling <tt>java convert</tt> from the Command-Line</a></li>
+  </ul>
+  <li><a href="#API">3. Using the APIs in Your Java Program</a></li>
+  <ul>
+    <li><a href="#Imports">3.1. Java Import Statements</a></li>
+    <li><a href="#Factory">3.2. Use the ConverterFactory to Create the
+Appropriate Converter</a></li>
+    <li><a href="#CallConverter">3.3. Call the Converter</a></li>
+  </ul>
+  <li><a href="#Feedback">4. Feedback and Participation</a></li>
+ </ul>
+
+<hr />
+
+<h2><a name="Introduction">1. Introduction</a></h2>
+
+<p><tt>file2xliff4j</tt> is a set of Java classes to convert HTML,
+Word, Excel, OpenOffice.org Text/Calc/Presentations, PowerPoint, Rich
+Text Format (RTF), Maker Interchange Format (MIF) and generic XML
+documents (more formats to be added later) to <a
+href="http://www.oasis-open.org/committees/xliff/documents/xliff-specification.htm">XML
+Localization Interchange File Format (XLIFF)</a>. (Files in XLIFF
+format are stored as a series of "translation units" that can be
+manipulated by translation tools.) After translators have translated
+the translation units into one or more different target languages
+(and software tools have added the translation(s) as &lt;target&gt;
+elements in the XLIFF), <tt>file2xliff4j</tt> can use the target
+translation units (in the XLIFF) to generate new translated
+document(s) in the same format (HTML, Word, etc.) as the original
+source documents, preserving most (if not all) of the original
+formatting.</p>
+
+<p>The current (11 June 2007) version of <tt>file2xliff4j</tt> uses <a
+href="http://www.artofsolving.com/opensource/jodconverter">JODConverter</a>
+(Java OpenDocument Converter) to convert Word, Excel, PowerPoint and
+RTF documents to <a href="http://openoffice.org">OpenOffice.org</a>'s
+OpenDocument text (ODT), calc (ODS) or presentations (ODP) format,
+then converts the ODT/S/P document to XLIFF. The conversion of XLIFF
+&lt;target&gt;'s back to Word, Excel, PowerPoint or RTF follows the
+reverse procedure (making use of JOOConverter and calling
+OpenOffice.org). The conversion of HTML, OpenOffice.org
+Text/Calc/Presentations, MIF and generic XML documents does not
+require that OpenOffice.org be installed and "listening." (See
+below.)</p>
+
+<p>Version 2.2.0 or later of JODConverter is required.</p>
+
+<p><tt>file2xliff4j</tt> requires at least version 2.0 of
+OpenOffice.org. (The very lastest release is recommended.) Using
+earlier versions of OpenOffice.org will generally result in poorer
+conversions.</p>
+
+<h2><a name="Setup">2. Setup and Configuration</a></h2>
+<h3><a name="Building">2.1. Build file2xliff4j.jar</a></h3>
+
+<p><tt>file2xliff4j</tt> requires Java 5 and JDK 1.5 or higher. It
+depends on the following jar files (available on the Internet):
+
+<ol>
+<li>nekohtml.jar (This must be <i>ahead</i> of xercesImpl.jar in the
+class path.)</li>
+<li>xercesImpl.jar</li>
+<li>jodconverter-2.2.0.jar</li>
+<li>commons-io-1.3.1.jar</li>
+<li>juh-2.2.0.jar</li>
+<li>jurt-2.2.0.jar</li>
+<li>ridl-2.2.0.jar</li>
+<li>slf4j-api-1.4.0.jar</li>
+<li>slf4j-jdk14-1.4.0.jar</li>
+<li>unoil-2.2.0.jar</li>
+<li>jpedalSTD.jar (Used by the pre-alpha PDF importer)</li>  
+</ol>
+</p>
+
+<p>With the above in your class path, build all the java files found
+in file2xliff4j/src, as well as the one package-less convert.java
+(whose main class gives a command-line interface into file2xliff4j),
+creating a jar named file2xliff4j.jar. (The convert.java file is at
+file2xliff4j/src.)</p>
+
+<p>The file2xliff4j.jar file should also include the file
+META-INF/services/java.nio.charset.spi.CharsetProvider in order for
+the MIF converters to work properly.</p>
+
+<p>Now add the newly created file2xliff4j.jar file to your class path.</p>
+
+<blockquote><small>If you don't have an integrated development
+environment (IDE) at your disposal, but have <tt>ant</tt> on your
+computer, you might be able to use the <tt>ant</tt> build file named
+<tt>build.xml</tt>, located in the base file2xliff4j directory. To use
+<tt>ant</tt>, try issuing the following commands while in the
+directory that contains <tt>build.xml</tt>:
+<pre><tt>
+% ant
+% ant javadoc
+</tt></pre>
+The first command will attempt to generate file2xliff4j.jar in the
+build/jar subdirectory; the second will generate JavaDoc documentation
+and place it in the build/doc subdirectory.
+</small></blockquote>
+
+<h3><a name="OpenOffice.org">2.2. Start OpenOffice.org Version 2.x in the
+Background</a></h3>
+
+<p>As noted above, <tt>file2xliff4j</tt> uses JODConverter to convert
+to or from some native formats. JODConverter requires that OpenOffice.org
+version 2.0 or later be running in the background, listening on port
+8100.</p>
+
+<p>To start OpenOffice.org in the background on Linux, issue something like the
+following command on the computer that will use file2xliff4j:</p>
+
+<tt><pre>
+% $PATH_TO_SOFFICE/soffice -headless -norestore -invisible "-accept=socket,host=localhost,port=8100;urp;"
+</pre></tt>
+
+<p>On Windows XP, the following will start OpenOffice.org and make it listen on port 8100:</p>
+<tt><pre>
+&gt; "\Program Files\OpenOffice.org 2.1\program\soffice.bin" -norestore "-accept=socket,host=localhost,port=8100;urp;"
+</pre></tt>
+
+<h3><a name="Callconvert">2.3. Try invoking <tt>java convert</tt> from the Command-Line</a></h3>
+
+<blockquote><small>The ant build.xml file includes a "onejar" target
+that will create an experimental jar file that has a Swing graphical
+user interface. If you dare--and don't need to use the OOo
+converter--try issuing the command "ant onejar"; it will place a
+file2xliff4j-&lt;version&gt;.jar file in the build/guijar
+subdirectory. You can invoke that jar by double-clicking on it or by
+issuing the command
+<pre><tt>
+% java -jar file2xliff4j-&lt;version&gt;.jar
+</tt></pre>
+(Feel free to help improve the GUI.)</small></blockquote>
+
+<p>You can use the sample "convert" java program (with a main()
+method) to perform the conversions mentioned above. Follow these steps
+to convert an HTML file named myfile.html to XLIFF:</p>
+
+<ol> 
+
+<li>Add file2xliff4j.jar and the 11 jar's mentioned above to your
+classpath. <i>Make sure that nekohtml.jar appears before
+xercesImpl.jar in the classpath.</i></li>
+
+<li>Create a working directory from which <tt>convert</tt> can read
+the input file(s). (<tt>convert</tt> will write intermediate and
+output files to this same directory.)</li>
+
+<li>Copy myfile.html to the working directory described above.</li>
+
+<li>Issue the following command:
+
+<pre><tt>
+$ java convert myfile.html /home/weldon/myfiledir toxliff en_US iso-8859-1 HTML
+</tt></pre>
+
+(In the above command line, /home/weldon/myfiledir is the working directory
+noted above.)
+</li>
+</ol>
+
+<p><tt>file2xliff4j</tt> will create the following files (and possibly
+a few others) in the directory /home/weldon/myfiledir:</p>
+
+<ul>
+<li>myfile.html.xliff</li>
+<li>myfile.html.format</li>
+<li>myfile.html.skeleton</li>
+</ul>
+
+<p>(You should save all three of the above files for the "return trip"
+that converts one of the new target languages--added to the xliff
+file--back to HTML. The skeleton file preserves the original structure
+of the HTML document; the format file stores mappings back to original
+formatting codes.)</p>
+
+<p>Invoking "java convert" without parameters will display the
+following online help:
+<table border="1"><tr><td>
+<pre>
+$ java convert
+Syntax:
+  java convert &lt;filename&gt; &lt;basedir&gt; &lt;mode&gt; &lt;lang&gt; &lt;encoding&gt;
+               &lt;filetype&gt;
+
+where:
+  &lt;filename&gt;    is the name of the file (without directory prefix)
+                to be converted.
+                If converting to XLIFF, it is the actual name of
+                the file to convert.
+                If converting from XLIFF, it is the name of the
+                original file initially converted to XLIFF.
+  &lt;basedir&gt;     is the name of the directory that contains the file
+                to be converted to XLIFF. This is also the directory
+                that will hold the generated XLIFF, skeleton, format
+                and other temporary and intermediate files.
+                If the conversion will generate an original-format
+                document from one of the &lt;target&gt; languages in the
+                XLIFF file (which must exist--along with the skeleton,
+                format, and original file(s)), the generated files
+                will have names that match the original &lt;source&gt; file,
+                except that the language will be inserted before the
+                extension.
+  &lt;mode&gt;        is either "toxliff" or "fromxliff".
+  &lt;lang&gt;        is the ISO language code of the source document (if
+                converting to XLIFF) or the code of the target language
+                (if converting a target to the original format).
+  &lt;encoding&gt;    is the encoding (e.g. ISO-8859-1, SHIFT-JIS, etc.) of
+                the native document.
+  &lt;filetype&gt;    one of "HTML", "WORD", "EXCEL", "MIF",
+                "ODT", "RTF" or "PPT"
+</pre>
+</td></tr></table>
+</p>
+
+<h2><a name="API">3. Using the APIs in Your Java Program</a></h2>
+
+<h3><a name="Imports">3.1. Java Import Statements</a></h3>
+
+<p><tt>file2xliff4j</tt> requires at least the following imports,
+which should appear near the beginning of the Java source file(s) that
+will call the APIs:</p>
+
+<table border="1"><tr><td>
+<pre><code>
+import file2xliff4j.*;               // The file2xliff4j classes
+import java.util.Locale;             // For identifying languages
+import java.nio.charset.*;           // Charset identifies encodings
+import f2xutils.*;
+</code></pre>
+</td></tr></table>
+
+<h3><a name="Factory">3.2. Use the ConverterFactory to Create the
+Appropriate Converter</a></h3>
+
+<p>All the <tt>file2xliff4j</tt> converters implement the Converter
+interface. If you know the file type of your document, you can call
+the <tt>ConverterFactory</tt> class's static <tt>createConverter</tt>
+method to "manufacture" an appropriate converter.</p>
+
+<p>The following code snippet illustrates how to instantiate a converter
+that converts a U.S. English HTML document to XLIFF. The arguments
+are:
+<ol>
+<li>From type (HTML in this example)</li>
+<li>To type (XLIFF in this example)</li>
+</ol>
+</p>
+
+<table border="1"><tr><td>
+<pre><code>
+// Instantiate a converter that converts HTML to XLIFF:
+
+Converter converter = null;
+
+try {
+    converter = ConverterFactory.createConverter(FileType.HTML,
+        FileType.XLIFF);
+}
+catch(ConversionException e) {
+    System.err.println("Error creating HTML-to-XLIFF"
+        + "converter: " + e.getMessage());
+    System.exit(2);
+}
+</code></pre>
+</td></tr></table>
+
+<h3><a name="CallConverter">3.3. Call the Converter</a></h3>
+
+<p>With a Converter implementation instantiated, call the
+Converter. The arguments we will pass to the converter are as follows:</p>
+
+<ol>
+<li>Conversion mode (either ConversionMode.FROM_XLIFF or
+ConversionMode.TO_XLIFF--ConversionMode.TO_XLIFF in our example)</li>
+<li>Locale of the original document (en_US in our example)</li>
+<li>Name of the phase to convert. (This is meaningful only when
+converting from XLIFF back to HTML. When converting from HTML to
+XLIFF, the parameter is ignored. In the example below, we pass
+<tt>null</tt> for this parameter. See the JavaDoc for more
+information.)</li>
+<li>The maximum phase "number". (This is meaningful only for
+conversions from XLIFF back to the native format, where there are
+multiple target elements for the same locale, differentiated only by
+XLIFF's optional phase-name attribute.) This parameter is ignored if
+conversion is <i>to</i> XLIFF.  If phaseName is specified as "0"
+and maxPhase is a non-negative integer, search for the highest
+"numbered" phase, starting at maxPhase, and searching down to phase
+"1". In the example below, we use 0 for the maximum phase number,
+which is meaningless, since the parameter before it is null.</li>
+<li>Character encoding (iso-8859-1 in our example). (In the case of
+HTML, <tt>file2xliff4j</tt> will search the beginning of the input
+file for a <tt>meta</tt> tag that indicates the encoding. If the
+encoding in the <tt>meta</tt> doesn't match the encoding specified in
+the input parameter, the encoding in the <tt>meta</tt> tag will be used.)</li>
+<li>Type of document (FileType.HTML in our example)</li>
+<li>File name of the HTML file ("demo.html" in our example)</li>
+<li>Base directory that contains "demo.html" ("/home/weldon/testdir"
+in our example)</li>
+</ol>
+
+<p>Here is the call:</p>
+
+<table border="1"><tr><td>
+<pre><code>
+try {
+    converter.convert(ConversionMode.TO_XLIFF, new Locale("en","US"),
+        null, 0, Charset.forName("iso-8859-1"), FileType.HTML, "demo.html",
+        "/home/weldon/testdir", null, null, null);
+}
+catch(ConversionException e) {
+    System.err.println("Error converting file demo.html: "
+        + e.getMessage());
+    System.exit(3);  // Or do something else.
+}
+</code></pre>
+</td></tr></table>
+
+<p>If the conversion succeeds, you should find (at least) the
+following additional files in the /home/weldon/testdir directory:
+<ol>
+<li>demo.html.xliff</li>
+<li>demo.html.skeleton</li>
+<li>demo.html.format</li>
+</ol></p>
+
+<h2><a name="Feedback">4. Feedback and Participation</a></h2>
+
+<p>This document and <tt>file2xliff4j</tt> are works in
+progress. Feel free to send feedback and contribute corrections and
+enhancements to this project.</p>
+
+</body>
+</html>

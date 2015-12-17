@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Language" content="en-us" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<title>Running File2xliff4j with a Graphical User Interface on Fedora Linux</title>
+</head>
+<body>
+<h1>Running File2xliff4j with a Graphical User Interface on Fedora Linux</h1>
+<p>Weldon Whipple &lt;<a href="mailto:weldon@lingotek.com">weldon@lingotek.com</a>&gt;<br />
+Revised 15 June 2007</p>
+<hr />
+
+<h2>Contents</h2>
+ <ol>
+  <li><a href="#Introduction">Introduction</a></li>
+  <li><a href="#Setup">Setup and Configuration</a></li>
+  <li><a href="#OOoFromYum">Install OpenOffice.org with YUM</a></li>
+  <li><a href="#Checkout">Checkout and Build file2xliff4j</a></li>
+  <li><a href="#ConvertNonOOo">Convert HTML or Java Properties
+      Resource Bundle to XLIFF</a></li>
+  <li><a href="#Microsoft">Converting Word, Excel, PowerPoint and RTF
+      to XLIFF</a></li>
+  <li><a href="#Afterword">Afterword</a></li>
+ </ul>
+
+<hr />
+
+<h2><a name="Introduction">1. Introduction</a></h2>
+
+<p>When I inherited ownership of <tt>file2xliff4j</tt> in early 2006,
+the only way to invoke it (outside of a custom-built application that
+used the file2xliff4j classes) was with the Java <tt>convert</tt>
+command. I have never been very happy with that interface, so in the
+spring of 2007 I tried my hand at a Swing graphical user interface for
+the tool. It worked inside my JavaBeans IDE, but wouldn't work
+outside. I recently got it to work outside the IDE, so I decided to
+write a short tutorial on how I make it work.</p>
+
+<h2><a name="Setup">2. Setup and Configuration</a></h2>
+
+<p>Here is my current setup:</p>
+<ul>
+<li>Athlon 64 computer running the x86_64 version of Fedora Core Linux
+6 (soon to be 7)</li>
+<li>Java JDK 1.5</li>
+<li>The latest file2xliff4j from SourceForge.net</li>
+<li>OpenOffice.org 2.0.4 (installed with yum). (Not required for
+converting HTML, MIF, Java Property Resource Bundles, XUL
+DTDs or OpenOffice.org Text, Calc or Presentations. <i>Definitely</i> 
+required for converting Microsoft Word, Excel, PowerPoint and RTF.)</li>
+<li>Java OpenDocument Converter (JODConverter)</li>
+</ul>
+
+<h2><a name="OOoFromYum">3. Install OpenOffice.org with YUM</a></h2>
+
+<p>Issue the following yum (YellowDog Update Manager) commands to
+install OOo:</p>
+<ul>
+<li>yum install openoffice.org-core.x86_64</li>
+<li>yum install openoffice.org-calc.x86_64</li>
+<li>yum install openoffice.org-writer.x86_64</li>
+<li>yum install openoffice.org-draw.x86_64</li>
+<li>yum install openoffice.org-impress.x86_64</li>
+</ul>
+
+<blockquote><small>If your conversions will be limited to HTML, MIF,
+Java Property Resource Bundles and XML DTDs, you probably don't need
+to install OpenOffice.org.</small></blockquote>
+
+<h2><a name="Checkout">4. Checkout and Build file2xliff4j</a></h2>
+
+<p>In an empty working directory of your choice (I use ~/work), issue
+these commands:</p>
+<pre><tt>
+$ svn checkout https://file2xliff4j.svn.sourceforge.net/svnroot/file2xliff4j/trunk
+$ cd trunk
+$ ant
+</tt></pre>
+
+<p>Notice the jar file created in the build/guijar 
+subdirectory: file2xliff4j-gui-<i>&lt;yyyymmdd&gt;</i>.jar</p>
+
+<h2><a name="ConvertNonOOo">5. Convert HTML or Java Properties
+Resource Bundle to XLIFF</a></h2>
+
+<p>You don't need to start OpenOffice.org running in the background if
+your conversions will be limited to HTML, Java Properties Resource
+Bundles, MIF or XUL DTDs. Just change to the build/guijar subdirectory
+(beneath the trunk directory where you were in the previous
+step). Then issue the following command and follow the prompts:</p>
+
+<pre><tt>
+$ java -jar file2xliff4j-gui-<i>&lt;yyyymmdd&gt;</i>.jar
+</tt></pre>
+
+<h2><a name="Microsoft">6. Converting Word, Excel, PowerPoint and RTF
+to XLIFF</a></h2>
+
+<p>In order to convert Microsoft documents to XLIFF, you will first
+need to start OpenOffice.org running in the background. Issue this command:</p>
+
+<tt><pre>
+$ /usr/lib64/openoffice.org2.0/program/soffice -headless -norestore -invisible "-accept=socket,host=localhost,port=8100;urp;" &
+</pre></tt>
+
+<p>Then run file2xliff4j as instructed in step 5.</p>
+
+<h2><a name="Afterword">7. Afterword</a></h2>
+
+<p>The file2xliff4j capabilities described on this page should be
+considered experimental (pre-alpha). Hopefully these tips will help you.</p>
+
+</body>
+</html>
